@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import cn from "classnames";
-//import "todomvc-app-css/index.css";
 import { useMachine } from "@xstate/react";
 import { useHashChange } from "../utils/useHashChange";
 import { Todo } from "./Todo";
@@ -28,7 +27,7 @@ const persistedTodosMachine = todosMachine.withConfig(
   },
   // initial state from localstorage
   {
-    todo: "Learn state machines",
+    todo: "Aprenda máquinas de estado",
     todos: (() => {
       try {
         return JSON.parse(localStorage.getItem("todos-xstate")) || [];
@@ -60,7 +59,7 @@ export default function Todos() {
           <h1>todos</h1>
           <input
             className="new-todo"
-            placeholder="What needs to be done?"
+            placeholder="O que precisa ser feito?"
             autoFocus
             onKeyPress={e => {
               if (e.key === "Enter") {
@@ -93,9 +92,9 @@ export default function Todos() {
         {!!todos.length && (
           <footer className="footer">
             <span className="todo-count">
-              <strong>{numActiveTodos}</strong> item
-            {numActiveTodos === 1 ? "" : "s"} left
-          </span>
+              <strong>{numActiveTodos}</strong>
+              {numActiveTodos === 1 ? " item restante" : " itens restantes"}
+            </span>
             <ul className="filters">
               <li>
                 <a
@@ -104,7 +103,7 @@ export default function Todos() {
                   })}
                   href="#/"
                 >
-                  All
+                  Todos
               </a>
               </li>
               <li>
@@ -114,7 +113,7 @@ export default function Todos() {
                   })}
                   href="#/active"
                 >
-                  Active
+                  Ativos
               </a>
               </li>
               <li>
@@ -124,7 +123,7 @@ export default function Todos() {
                   })}
                   href="#/completed"
                 >
-                  Completed
+                  Concluídos
               </a>
               </li>
             </ul>
@@ -133,7 +132,7 @@ export default function Todos() {
                 onClick={_ => send("CLEAR_COMPLETED")}
                 className="clear-completed"
               >
-                Clear completed
+                Limpa concluídos
               </button>
             )}
           </footer>
