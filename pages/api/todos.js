@@ -1,22 +1,23 @@
-import { NextApiRequest, NextApiResponse } from 'next';
+import { uuid } from 'uuidv4';
 
-const todos = [
-    {
-        isComplete: false,
-        id: '2dc55767-e5bb-47c7-8a6a-8713a5e635a8',
-        title: 'teste 1',
-    },
-    {
-        isComplete: true,
-        id: '2dc55767-e5bb-47c7-8a6a-8713a5e635gt',
-        title: 'teste 2',
-    },
-];
+import knex from '../../database/connection';
 
-export default function getAll(request, response) {
+export default async function todoMethodsWithoutId(request, response) {
     try {
-        return response.json(todos);
+        switch (request.method) {
+            case 'GET':
+                const todos = await knex('todos').select('todos.*');
+                return response.json(todos);
+            case 'POST':
+                const { title, isComplete } = request.body;
+                const id = uuid();
+                const todo = await knex('todos').insert({ id, title, isComplete });
+                return response.json(todo);
+            default:
+                response.status(400).json({ error: 'http method not accepted for that path' });
+                break;
+        }
     } catch (err) {
-        return response.status(400).json({ error: err.message });
+        response.status(400).json({ error: err.message });
     }
 }

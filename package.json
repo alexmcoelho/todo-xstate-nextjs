@@ -6,7 +6,10 @@
   "scripts": {
     "dev": "next",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "knex:migrate": "knex --knexfile knexfile.js migrate:latest",
+    "knex:rollback": "knex --knexfile knexfile.js migrate:rollback",
+    "knex:seed": "knex --knexfile knexfile.js seed:run"
   },
   "keywords": [],
   "author": "",
@@ -14,15 +17,18 @@
   "dependencies": {
     "@xstate/react": "0.7.1",
     "axios": "^0.19.2",
-    "polished": "3.4.1",
+    "knex": "^0.21.1",
     "next": "^9.4.4",
+    "polished": "3.4.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-error-boundary": "1.2.5",
+    "sqlite3": "^4.2.0",
     "styled-components": "4.4.0",
     "xstate": "4.6.7"
   },
   "devDependencies": {
-    "babel-plugin-styled-components": "^1.11.1"
+    "babel-plugin-styled-components": "^1.11.1",
+    "uuidv4": "^6.0.7"
   }
 }

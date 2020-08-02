@@ -27,10 +27,6 @@ const TodoList = () => {
         send('fetch');
     })
 
-    if (machine.value === 'loading') {
-        return 'loading...'
-    }
-
     return (
         <section>
             <Title>todos</Title>
