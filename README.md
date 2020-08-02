@@ -6,11 +6,11 @@ Primeiro é preciso baixar as dependências com o seguinte comando:
 
 	npm i
 
-Agora é preciso criar a base de dados (*sqlite*), para isso basta usar os seguinte comando:
+Agora é preciso criar a base de dados (*sqlite*), para isso basta usar o seguinte comando:
 
 	npm run knex:migrate
 
-Caso deseje você pode iniciar a base com alguns dados, utilizando o comando:
+Caso deseje, você pode iniciar a base com alguns dados, utilizando o comando:
 
 	npm run knex:seed
 
