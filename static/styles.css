@@ -1,0 +1,11 @@
+body {
+    font-family: sans-serif;
+    background: #eee;
+  }
+  
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+  

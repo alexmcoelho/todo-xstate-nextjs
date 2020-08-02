@@ -12,15 +12,17 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@xstate/react": "0.8.1",
-    "classnames": "latest",
+    "@xstate/react": "0.7.1",
+    "axios": "^0.19.2",
+    "polished": "3.4.1",
     "next": "^9.4.4",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "source-map": "0.7.3",
-    "todomvc-app-css": "^2.1.2",
-    "todomvc-common": "^1.0.0",
-    "uuid-v4": "0.1.0",
-    "xstate": "4.7.6"
+    "react-error-boundary": "1.2.5",
+    "styled-components": "4.4.0",
+    "xstate": "4.6.7"
+  },
+  "devDependencies": {
+    "babel-plugin-styled-components": "^1.11.1"
   }
 }
