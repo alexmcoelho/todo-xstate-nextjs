@@ -21,7 +21,12 @@ export default async function todo(request, response) {
                     resp = await knex('todos')
                         .where('id', ids[0])
                         .update({ title, isComplete }, ['id', 'title', 'isComplete']);
-                    return response.json({ message: 'Ok' });
+                    const todo = {
+                        id: ids[0],
+                        title,
+                        isComplete
+                    };
+                    return response.json(todo);
                 }
                 return response.status(404).json({ error: 'Not found' });
 

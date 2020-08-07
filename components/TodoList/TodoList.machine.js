@@ -1,4 +1,5 @@
 import { Machine, assign, send } from "xstate";
+
 import api from '../../services/api';
 
 const hasValue = (_, event) => Boolean(event.data.trim());
@@ -13,6 +14,47 @@ const setDraft = assign({
 });
 
 const clearDraft = assign({ draft: "" });
+
+const saveTodo = assign({
+    todos: (context, event) => {
+        if (event.data && event.data.id) {
+            const newTodos = [...context.todos];
+            const { id } = event.data;
+            const index = newTodos.findIndex(todo => todo.id === id);
+            newTodos[index] = event.data;
+            return newTodos;
+        }
+        return [
+            ...context.todos,
+            {
+                id: uniqid(),
+                title: event.data,
+                isComplete: false
+            }
+        ];
+    }
+});
+
+const deleteTodo = assign({
+    todos: (context, event) => {
+        return context.todos.filter(todo => todo.id !== event.data);
+    }
+});
+
+const deleteCompleted = assign({
+    todos: (context, event) => {
+        return context.todos.filter(todo => !todo.isComplete);
+    }
+});
+
+const toggleCompleted = assign({
+    todos: (context, event) => {
+        return context.todos.map(todo => ({
+            ...todo,
+            isComplete: event.data
+        }));
+    }
+});
 
 const listAll = async (context, event) => {
     const response = await api.get('/todos')
@@ -86,36 +128,6 @@ export const todoListMachine = Machine(
                     onError: "empty"
                 }
             },
-            deleteData: {
-                invoke: {
-                    src: deleteOn,
-                    onDone: {
-                        target: 'loading',
-                        actions: "clearDraft"
-                    },
-                    onError: "empty"
-                }
-            },
-            deleteSeveral: {
-                invoke: {
-                    src: deleteOnSeveral,
-                    onDone: {
-                        target: 'loading',
-                        actions: "clearDraft"
-                    },
-                    onError: "empty"
-                }
-            },
-            updateSeveral: {
-                invoke: {
-                    src: updateSeveral,
-                    onDone: {
-                        target: 'loading',
-                        actions: "clearDraft"
-                    },
-                    onError: "empty"
-                }
-            },
             empty: {
                 entry: "handleFocusInput",
                 on: {
@@ -132,31 +144,33 @@ export const todoListMachine = Machine(
                         actions: "setDraft"
                     },
                     TODO_UPDATE: {
-                        target: "saveData"
+                        actions: ["save", "saveTodo", "clearDraft"],
                     },
                     TODO_DELETE: [
                         {
                             cond: "isLastTodo",
-                            actions: ["deleteTodo"],
+                            actions: ["deleteOn", "deleteTodo"],
                             target: "empty"
                         },
                         {
-                            target: "deleteData"
+                            actions: ["deleteOn", "deleteTodo"]
                         },
                     ],
+                    DELETE_ON_SEVERAL: {
+                        actions: "deleteOnSeveral"
+                    },
+                    DELETE_COMPLETED: {
+                        actions: "deleteCompleted"
+                    },
                     COMPLETED_DELETE: {
-                        target: "deleteSeveral"
+                        actions: [send('DELETE_ON_SEVERAL'), send('DELETE_COMPLETED')]
                     },
                     COMPLETED_TOGGLE: {
-                        //actions: ["toggleCompleted", send("SAVE")]
-                        target: "updateSeveral"
+                        actions: ["updateSeveral", "toggleCompleted", "clearDraft"]
                     },
                     SHOW_ALL: ".all",
                     SHOW_ACTIVE: ".active",
                     SHOW_COMPLETE: ".complete",
-                    SAVE: {
-                        actions: "handleSave"
-                    }
                 },
                 states: {
                     all: {},
@@ -175,6 +189,14 @@ export const todoListMachine = Machine(
             setTodos,
             setDraft,
             clearDraft,
+            saveTodo,
+            deleteTodo,
+            deleteCompleted,
+            toggleCompleted,
+            save,
+            deleteOn,
+            deleteOnSeveral,
+            updateSeveral
         },
     }
 );

@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "next",
+    "dev": "next -p 8080",
     "build": "next build",
     "start": "next start",
     "knex:migrate": "knex --knexfile knexfile.js migrate:latest",
@@ -16,14 +16,16 @@
   "license": "ISC",
   "dependencies": {
     "@xstate/react": "0.7.1",
+    "classnames": "latest",
     "axios": "^0.19.2",
     "knex": "^0.21.1",
     "next": "^9.4.4",
-    "polished": "3.4.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-error-boundary": "1.2.5",
     "sqlite3": "^4.2.0",
+    "todomvc-app-css": "^2.1.2",
+    "todomvc-common": "^1.0.0",
     "styled-components": "4.4.0",
     "xstate": "4.6.7"
   },
