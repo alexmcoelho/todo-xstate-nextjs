@@ -11,7 +11,8 @@ export default async function todoMethodsWithoutId(request, response) {
             case 'POST':
                 const { title, isComplete } = request.body;
                 const id = uuid();
-                const todo = await knex('todos').insert({ id, title, isComplete });
+                const todo = { id, title, isComplete };
+                await knex('todos').insert({ id, title, isComplete });
                 return response.json(todo);
             default:
                 response.status(400).json({ error: 'http method not accepted for that path' });

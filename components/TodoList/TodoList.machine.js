@@ -6,7 +6,9 @@ const hasValue = (_, event) => Boolean(event.data.trim());
 const isLastTodo = context => context.todos.length === 0;
 
 const setTodos = assign({
-    todos: (_, event) => event.data
+    todos: (context, event) => {
+        return event.data
+    }
 });
 
 const setDraft = assign({
@@ -15,7 +17,7 @@ const setDraft = assign({
 
 const clearDraft = assign({ draft: "" });
 
-const saveTodo = assign({
+const updateTodo = assign({
     todos: (context, event) => {
         if (event.data && event.data.id) {
             const newTodos = [...context.todos];
@@ -24,10 +26,16 @@ const saveTodo = assign({
             newTodos[index] = event.data;
             return newTodos;
         }
+        return context.todos;
+    }
+});
+
+const saveTodo = assign({
+    todos: (context, event) => {
         return [
             ...context.todos,
             {
-                id: uniqid(),
+                id: event.data.id,
                 title: event.data,
                 isComplete: false
             }
@@ -67,10 +75,13 @@ const save = async (context, event) => {
     if (event.data.id) {
         data = event.data;
         await api.put(`/todo/${event.data.id}`, data)
+        return null;
     }
     else {
         data = { title: event.data, isComplete: false };
-        await api.post('/todos', data)
+        const response = await api.post('/todos', data);
+        const result = response.data;
+        return result;
     }
 }
 
@@ -96,12 +107,6 @@ export const todoListMachine = Machine(
             draft: "",
             todos: []
         },
-        on: {
-            TODO_CREATE: {
-                cond: "hasValue",
-                target: "saveData"
-            },
-        },
         states: {
             load: {
                 on: {
@@ -122,8 +127,7 @@ export const todoListMachine = Machine(
                 invoke: {
                     src: save,
                     onDone: {
-                        target: 'loading',
-                        actions: "clearDraft"
+                        actions: ["saveTodo"],
                     },
                     onError: "empty"
                 }
@@ -143,8 +147,12 @@ export const todoListMachine = Machine(
                     TODO_DRAFT: {
                         actions: "setDraft"
                     },
+                    TODO_CREATE: {
+                        cond: "hasValue",
+                        actions: ["save", "saveTodo", "clearDraft"]
+                    },
                     TODO_UPDATE: {
-                        actions: ["save", "saveTodo", "clearDraft"],
+                        actions: ["save", "updateTodo", "clearDraft"],
                     },
                     TODO_DELETE: [
                         {
@@ -190,6 +198,7 @@ export const todoListMachine = Machine(
             setDraft,
             clearDraft,
             saveTodo,
+            updateTodo,
             deleteTodo,
             deleteCompleted,
             toggleCompleted,

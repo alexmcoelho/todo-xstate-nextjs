@@ -26,7 +26,7 @@ const ListState = ({ service }) => {
       <ul className="todo-list">
         {filteredTodos[filterState].map(todo => (
           <TodoListItem
-            key={todo.id + todo.isComplete}
+            key={todo.id + todo.isComplete + todo.title}
             defaultTitle={todo.title}
             defaultIsComplete={todo.isComplete}
             onDelete={() => send({ type: "TODO_DELETE", data: todo.id })}
