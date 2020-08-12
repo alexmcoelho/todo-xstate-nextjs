@@ -1,4 +1,5 @@
 import { Machine, assign, send } from "xstate";
+import { uuid } from 'uuidv4';
 
 import api from '../../services/api';
 
@@ -35,7 +36,7 @@ const saveTodo = assign({
         return [
             ...context.todos,
             {
-                id: event.data.id,
+                id: uuid(),
                 title: event.data,
                 isComplete: false
             }
@@ -78,7 +79,9 @@ const save = async (context, event) => {
         return null;
     }
     else {
-        data = { title: event.data, isComplete: false };
+        const size = context.todos.length;
+        const { id, title } = context.todos[size - 1];
+        data = { id, title: event.data, isComplete: false };
         const response = await api.post('/todos', data);
         const result = response.data;
         return result;
@@ -123,15 +126,6 @@ export const todoListMachine = Machine(
                     onError: "empty"
                 }
             },
-            saveData: {
-                invoke: {
-                    src: save,
-                    onDone: {
-                        actions: ["saveTodo"],
-                    },
-                    onError: "empty"
-                }
-            },
             empty: {
                 entry: "handleFocusInput",
                 on: {
@@ -148,8 +142,7 @@ export const todoListMachine = Machine(
                         actions: "setDraft"
                     },
                     TODO_CREATE: {
-                        cond: "hasValue",
-                        actions: ["save", "saveTodo", "clearDraft"]
+                        actions: ["save", "saveTodo", send({ type: 'TODO_DRAFT', data: '' })]
                     },
                     TODO_UPDATE: {
                         actions: ["save", "updateTodo", "clearDraft"],

@@ -1,5 +1,3 @@
-import { uuid } from 'uuidv4';
-
 import knex from '../../database/connection';
 
 export default async function todoMethodsWithoutId(request, response) {
@@ -9,8 +7,7 @@ export default async function todoMethodsWithoutId(request, response) {
                 const todos = await knex('todos').select('todos.*');
                 return response.json(todos);
             case 'POST':
-                const { title, isComplete } = request.body;
-                const id = uuid();
+                const { id, title, isComplete } = request.body;
                 const todo = { id, title, isComplete };
                 await knex('todos').insert({ id, title, isComplete });
                 return response.json(todo);
