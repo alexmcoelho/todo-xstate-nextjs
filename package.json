@@ -17,7 +17,7 @@
   "dependencies": {
     "@xstate/react": "0.7.1",
     "classnames": "latest",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "knex": "^0.21.1",
     "next": "^9.4.4",
     "react": "^16.13.1",
